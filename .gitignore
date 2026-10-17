@@ -1,0 +1,5 @@
+# Build output: rebuilt by build.ps1
+bin/
+
+# Per-user Claude Code permissions for this folder
+.claude/settings.local.json
