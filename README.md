@@ -2,6 +2,8 @@
 
 Icona nella barra di Windows 11 che mostra a colpo d'occhio quanto hai usato dei limiti di Claude: la sessione di 5 ore, la settimana (tutti i modelli) e il limite settimanale di Fable.
 
+> Progetto indipendente, non affiliato né approvato da Anthropic. «Claude» è un marchio di Anthropic, PBC.
+
 ## Come si legge l'icona
 
 Tre barre orizzontali, dall'alto in basso:
@@ -86,3 +88,7 @@ Opzioni da riga di comando:
 
 - Impostazioni: `HKCU\Software\TurboClaudeMonitor`; avvio automatico in `HKCU\...\CurrentVersion\Run`.
 - Ultima risposta e log: `%LOCALAPPDATA%\TurboClaudeMonitor\` (`last-usage.json`, `monitor.log`).
+
+## Licenza
+
+MIT, vedi [LICENSE](LICENSE). Il programma è fornito così com'è, senza garanzie: usa un indirizzo non documentato e il login di Claude Code, e l'uso resta soggetto ai termini di servizio di Anthropic.
