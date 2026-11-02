@@ -483,6 +483,14 @@ namespace TurboClaudeMonitor
             }
         }
 
+        // Caches written before the October 2026 rename carry the old plan names.
+        static string PlanFromCache(string cached)
+        {
+            if (cached == "Max 20x") return Credentials.Ultra;
+            if (cached == "Max 5x") return "Max";
+            return cached;
+        }
+
         void LoadCache()
         {
             try
@@ -492,7 +500,8 @@ namespace TurboClaudeMonitor
                 if (parts.Length < 3) return;
                 DateTime fetchedAt = DateTime.Parse(parts[0], null, System.Globalization.DateTimeStyles.RoundtripKind);
                 snapshot = UsageParser.Parse(parts[2], fetchedAt);
-                if (parts[1].Length > 0) plan = parts[1];
+                if (parts[1].Length > 0) plan = PlanFromCache(parts[1]);
+                snapshot.ApplyPlan(plan);
             }
             catch (Exception ex)
             {

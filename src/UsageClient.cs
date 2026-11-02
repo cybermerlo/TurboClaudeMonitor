@@ -83,6 +83,7 @@ namespace TurboClaudeMonitor
             }
             result.Plan = creds.Plan;
             result.Refreshed = refreshed;
+            if (result.Snapshot != null) result.Snapshot.ApplyPlan(creds.Plan);
             return result;
         }
 

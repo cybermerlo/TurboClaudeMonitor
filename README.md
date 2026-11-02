@@ -1,6 +1,6 @@
 # TurboClaudeMonitor
 
-Icona nella barra di Windows 11 che mostra a colpo d'occhio quanto hai usato dei limiti di Claude: la sessione di 5 ore, la settimana (tutti i modelli) e il limite settimanale di Fable.
+Icona nella barra di Windows 11 che mostra a colpo d'occhio quanto hai usato dei limiti di Claude: la sessione di 5 ore (dove c'è ancora), la settimana (tutti i modelli) e il limite settimanale di Fable.
 
 > Progetto indipendente, non affiliato né approvato da Anthropic. «Claude» è un marchio di Anthropic, PBC.
 
@@ -8,9 +8,17 @@ Icona nella barra di Windows 11 che mostra a colpo d'occhio quanto hai usato dei
 
 Tre barre orizzontali, dall'alto in basso:
 
-1. **Sessione** (finestra di 5 ore)
+1. **Sessione** (finestra di 5 ore), solo sui piani che la hanno ancora
 2. **Settimana**, tutti i modelli
-3. **Fable**, limite settimanale (se il tuo account non lo ha, le barre sono due)
+3. **Fable**, limite settimanale
+
+Se un limite non c'è, la sua barra non compare e le barre sono due.
+
+### Piano Ultra: niente limite di 5 ore
+
+Dal 30 ottobre 2026 Anthropic ha rinominato i piani Max: il vecchio Max 5x ($100) si chiama **Max**, il vecchio Max 20x ($200) si chiama **Ultra**. Sugli account Ultra verificati il limite di sessione di 5 ore non c'è più; restano il limite settimanale e quello settimanale di Fable. Pro e Max tengono sia la sessione di 5 ore sia la settimana.
+
+Su Ultra l'icona mostra quindi due barre (settimana e Fable) e il pannello lo dice in cima. Gli account Ultra ancora in attesa di verifica hanno un limite temporaneo: finché il server lo riporta con un consumo o un orario di reset, la barra della sessione resta visibile e sparisce da sola quando il limite viene tolto.
 
 Il riempimento è la percentuale usata. Il colore cambia con la soglia: **verde** sotto il 50%, **ambra** dal 50%, **arancio** dall'80%, **rosso** dal 95%. Una barra piena e rossa è un limite esaurito.
 
@@ -23,7 +31,7 @@ Barre **grigie** vogliono dire dati non aggiornati: login scaduto o assente, opp
 ## Dettagli
 
 - **Passando il mouse** sull'icona: percentuale e orario di reset di ogni barra.
-- **Clic** sull'icona: il pannello completo, con tutti i limiti (anche Sonnet o Opus se presenti), il conto alla rovescia del reset, la proiezione al ritmo attuale («a questo ritmo si esaurisce domani 16:20») e i link per aggiornare o aprire la pagina Utilizzo di claude.ai. Esc o un clic altrove lo chiude.
+- **Clic** sull'icona: il pannello completo, con il piano (Pro, Max, Ultra), tutti i limiti (anche Sonnet o Opus se presenti), il conto alla rovescia del reset, la proiezione al ritmo attuale («a questo ritmo si esaurisce domani 16:20») e i link per aggiornare o aprire la pagina Utilizzo di claude.ai. Esc o un clic altrove lo chiude.
 - **Clic destro**: aggiorna ora, frequenza di aggiornamento (3, 5, 10 o 15 minuti; 5 è il default), tacca sì/no, avvisi a 80%, 95% e 100%, rinnovo automatico del login, avvio con Windows, esci.
 
 ![Pannello dei dettagli](docs/popup-chiaro.png)
@@ -81,7 +89,7 @@ Opzioni da riga di comando:
 | Opzione | Cosa fa |
 | --- | --- |
 | `--demo` | Avvia l'icona con numeri finti, senza rete né login |
-| `--check file.txt` | Una lettura dei limiti (con rinnovo del login se serve), riassunta in un file di testo senza token: utile se l'icona resta grigia |
+| `--check file.txt` | Una lettura dei limiti (con rinnovo del login se serve), riassunta in un file di testo senza token: utile se l'icona resta grigia o se manca una barra (elenca anche i campi restituiti dal server) |
 | `--render cartella` | Salva immagini ingrandite dell'icona e del pannello |
 
 ## File

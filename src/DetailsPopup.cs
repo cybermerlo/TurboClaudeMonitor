@@ -284,6 +284,11 @@ namespace TurboClaudeMonitor
 
             if (snap != null && snap.Limits.Count > 0)
             {
+                if (snap.NoSessionLimit)
+                {
+                    Line(g, "Nessun limite di sessione di 5 ore sul piano Ultra", fSmall, pal.Muted, x, y, paint);
+                    y += fSmall.Height + S(16);
+                }
                 for (int i = 0; i < snap.Limits.Count; i++)
                 {
                     if (i > 0) y += S(16);

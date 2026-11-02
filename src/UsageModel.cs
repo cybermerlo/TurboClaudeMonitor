@@ -64,6 +64,23 @@ namespace TurboClaudeMonitor
         public readonly List<UsageLimit> Limits = new List<UsageLimit>();
         public ExtraUsage Extra;
         public DateTime FetchedAt;
+        public bool NoSessionLimit; // Ultra account without the 5-hour limit: the icon shows only the weekly bars
+
+        // Verified Ultra accounts no longer have the 5-hour session limit (from 30 October 2026); accounts still
+        // awaiting verification keep a temporary one. The endpoint may drop "five_hour" or leave it empty: an
+        // empty session with no reset time on an Ultra plan is taken as "no limit" and left out of icon and popup.
+        // A session with real usage or a reset time is still shown, so a temporary limit stays visible.
+        public void ApplyPlan(string plan)
+        {
+            if (plan != Credentials.Ultra) return;
+            UsageLimit session = Find("five_hour");
+            if (session != null && session.Percent <= 0 && !session.ResetsAt.HasValue)
+            {
+                Limits.Remove(session);
+                session = null;
+            }
+            NoSessionLimit = session == null;
+        }
 
         public UsageLimit Find(string key)
         {
@@ -72,7 +89,7 @@ namespace TurboClaudeMonitor
             return null;
         }
 
-        // The bars of the tray icon, top to bottom: session, week, Fable.
+        // The bars of the tray icon, top to bottom: session (if the plan has it), week, Fable.
         public List<UsageLimit> IconLimits()
         {
             var list = new List<UsageLimit>();
@@ -183,6 +200,17 @@ namespace TurboClaudeMonitor
                     Window = TimeSpan.FromDays(7),
                 });
             }
+        }
+
+        // For --check: which windows the endpoint returned, and which came back empty, without any value.
+        public static string DescribeFields(string json)
+        {
+            var root = new JavaScriptSerializer { MaxJsonLength = int.MaxValue }.DeserializeObject(json) as Dictionary<string, object>;
+            if (root == null) return "-";
+            var parts = new List<string>();
+            foreach (KeyValuePair<string, object> kv in root)
+                parts.Add(kv.Key + (kv.Value == null ? "=null" : ""));
+            return string.Join(", ", parts.ToArray());
         }
 
         internal static object Get(Dictionary<string, object> d, string key)

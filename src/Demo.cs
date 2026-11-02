@@ -13,9 +13,16 @@ namespace TurboClaudeMonitor
     {
         public static string Json(DateTime now)
         {
+            return Json(now, false);
+        }
+
+        // ultra: the session window comes back empty, as on an Ultra plan without the 5-hour limit.
+        public static string Json(DateTime now, bool ultra)
+        {
             string session = Iso(now.AddMinutes(133));
             string week = Iso(now.AddDays(3).AddHours(4));
-            return "{\"five_hour\":{\"utilization\":42.0,\"resets_at\":\"" + session + "\"}," +
+            string fiveHour = ultra ? "null" : "{\"utilization\":42.0,\"resets_at\":\"" + session + "\"}";
+            return "{\"five_hour\":" + fiveHour + "," +
                    "\"seven_day\":{\"utilization\":75.0,\"resets_at\":\"" + week + "\"}," +
                    "\"seven_day_overage_included\":{\"utilization\":31.0,\"resets_at\":\"" + week + "\"}," +
                    "\"seven_day_sonnet\":{\"utilization\":12.0,\"resets_at\":\"" + week + "\"}," +
@@ -32,7 +39,7 @@ namespace TurboClaudeMonitor
         public static FetchResult Fetch()
         {
             DateTime now = DateTime.Now;
-            return new FetchResult { Status = FetchStatus.Ok, Snapshot = UsageParser.Parse(Json(now), now), Plan = "Max 20x" };
+            return new FetchResult { Status = FetchStatus.Ok, Snapshot = UsageParser.Parse(Json(now), now), Plan = "Max" };
         }
     }
 
@@ -77,16 +84,23 @@ namespace TurboClaudeMonitor
             UsageSnapshot snap = UsageParser.Parse(Demo.Json(now), now.AddMinutes(-1));
             foreach (bool light in new[] { true, false })
             {
-                var view = new FakeView { Snapshot = snap, Plan = "Max 20x", Status = FetchStatus.Ok };
+                var view = new FakeView { Snapshot = snap, Plan = "Max", Status = FetchStatus.Ok };
                 using (var popup = new DetailsPopup(view))
                 using (Bitmap bmp = popup.RenderToBitmap(light))
                     bmp.Save(Path.Combine(folder, light ? "popup-chiaro.png" : "popup-scuro.png"), ImageFormat.Png);
             }
 
+            UsageSnapshot ultra = UsageParser.Parse(Demo.Json(now, true), now.AddMinutes(-1));
+            ultra.ApplyPlan(Credentials.Ultra);
+            var ultraView = new FakeView { Snapshot = ultra, Plan = Credentials.Ultra, Status = FetchStatus.Ok };
+            using (var popup = new DetailsPopup(ultraView))
+            using (Bitmap bmp = popup.RenderToBitmap(true))
+                bmp.Save(Path.Combine(folder, "popup-ultra.png"), ImageFormat.Png);
+
             var expired = new FakeView
             {
                 Snapshot = snap,
-                Plan = "Max 20x",
+                Plan = "Max",
                 Status = FetchStatus.TokenExpired,
                 IsStale = true,
                 StatusMessage = "Il login di Claude Code è scaduto. Si rinnova da solo appena usi Claude Code dal terminale; l'icona riprende entro un minuto.",

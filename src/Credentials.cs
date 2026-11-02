@@ -45,12 +45,16 @@ namespace TurboClaudeMonitor
 
         public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+        // Since 30 October 2026 the $200 plan (formerly Max 20x) is called Ultra and the $100 one (formerly Max 5x) just Max.
+        // The tier strings in the credentials file may keep the old names, so both are recognised.
+        public const string Ultra = "Ultra";
+
         static string PlanLabel(string subscription, string tier)
         {
             string t = (tier ?? "").ToLowerInvariant();
-            if (t.Contains("max_20x")) return "Max 20x";
-            if (t.Contains("max_5x")) return "Max 5x";
             string s = (subscription ?? "").Trim();
+            if (t.Contains("ultra") || t.Contains("max_20x") || s.Equals("ultra", StringComparison.OrdinalIgnoreCase)) return Ultra;
+            if (t.Contains("max_5x")) return "Max";
             if (s.Length == 0) return null;
             return char.ToUpperInvariant(s[0]) + s.Substring(1).ToLowerInvariant();
         }

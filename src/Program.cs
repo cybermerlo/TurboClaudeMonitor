@@ -66,6 +66,12 @@ namespace TurboClaudeMonitor
             sb.AppendLine("Stato: " + r.Status + (string.IsNullOrEmpty(r.Detail) ? "" : " (" + r.Detail + ")"));
             sb.AppendLine("Rinnovo automatico: " + (autoRefresh ? "attivo" : "spento") + (r.Refreshed ? ", login rinnovato ora" : ""));
             if (r.Plan != null) sb.AppendLine("Piano: " + r.Plan);
+            if (r.RawJson != null)
+            {
+                try { sb.AppendLine("Campi della risposta: " + UsageParser.DescribeFields(r.RawJson)); }
+                catch (Exception) { }
+            }
+            if (r.Snapshot != null && r.Snapshot.NoSessionLimit) sb.AppendLine("Sessione di 5 ore: nessun limite (piano Ultra)");
             if (r.Snapshot != null)
                 foreach (UsageLimit l in r.Snapshot.Limits)
                     sb.AppendLine(l.Key + ": " + l.Percent + "% reset " + (l.ResetsAt.HasValue ? l.ResetsAt.Value.ToString("yyyy-MM-dd HH:mm") : "-"));
